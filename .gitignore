@@ -11,7 +11,10 @@ backend/package-lock.json
 # Production builds
 dist/
 build/
+.next/
+out/
 frontend/dist/
+legacy_mern_backup/
 
 # Local env files (secrets)
 .env
