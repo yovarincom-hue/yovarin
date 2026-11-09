@@ -7,8 +7,8 @@ export default function ThemeProvider({ children }) {
   return (
     <NextThemesProvider 
       attribute="class" 
-      defaultTheme="dark" 
-      enableSystem={true}
+      defaultTheme="light" 
+      enableSystem={false}
       disableTransitionOnChange={false}
     >
       {children}
