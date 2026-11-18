@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
+import TurnstileWidget from '@/components/TurnstileWidget';
 import Link from 'next/link';
 import Image from 'next/image';
 import { 
@@ -114,6 +115,10 @@ export default function BlogPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [newsletterEmail, setNewsletterEmail] = useState('');
   const [subscribed, setSubscribed] = useState(false);
+  const [subscribing, setSubscribing] = useState(false);
+  const [turnstileToken, setTurnstileToken] = useState('');
+  const [turnstileResetKey, setTurnstileResetKey] = useState(0);
+  const [newsletterError, setNewsletterError] = useState('');
 
   const filteredPosts = BLOG_POSTS.filter((post) => {
     const matchesCategory = selectedCategory === 'All' || post.category === selectedCategory;
@@ -127,19 +132,29 @@ export default function BlogPage() {
 
   const handleSubscribe = async (e) => {
     e.preventDefault();
-    if (!newsletterEmail) return;
+    if (!newsletterEmail || !turnstileToken) return;
+    setNewsletterError('');
+    setSubscribing(true);
     try {
-      await fetch('/api/newsletter', {
+      const response = await fetch('/api/newsletter', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: newsletterEmail }),
+        body: JSON.stringify({ email: newsletterEmail, turnstileToken }),
       });
+      const result = await response.json();
+      if (!response.ok) {
+        throw new Error(result.error || 'Failed to subscribe.');
+      }
       setSubscribed(true);
       setNewsletterEmail('');
+      setTurnstileToken('');
     } catch (err) {
       console.error('Subscription error:', err);
-      setSubscribed(true);
-      setNewsletterEmail('');
+      setNewsletterError(err.message || 'Failed to subscribe. Please try again.');
+      setTurnstileToken('');
+      setTurnstileResetKey((key) => key + 1);
+    } finally {
+      setSubscribing(false);
     }
   };
 
@@ -375,22 +390,37 @@ export default function BlogPage() {
                 Welcome. You are now subscribed to the Yovarin Private Dispatch.
               </div>
             ) : (
-              <form onSubmit={handleSubscribe} className="flex flex-col sm:flex-row gap-2.5 max-w-md mx-auto pt-2">
-                <input
-                  type="email"
-                  required
-                  value={newsletterEmail}
-                  onChange={(e) => setNewsletterEmail(e.target.value)}
-                  placeholder="Enter your enterprise email..."
-                  className="flex-1 bg-slate-950 border border-slate-800 focus:border-gold-400 rounded-xl px-4 py-3 text-xs text-white placeholder-slate-500 focus:outline-none"
-                />
-                <button
-                  type="submit"
-                  className="btn-luxury-gold px-6 py-3 text-xs rounded-xl whitespace-nowrap cursor-pointer"
-                >
-                  Join Dispatches
-                </button>
-              </form>
+              <>
+                <form onSubmit={handleSubscribe} className="flex flex-col sm:flex-row gap-2.5 max-w-md mx-auto pt-2">
+                  <input
+                    type="email"
+                    required
+                    value={newsletterEmail}
+                    onChange={(e) => setNewsletterEmail(e.target.value)}
+                    placeholder="Enter your enterprise email..."
+                    className="flex-1 bg-slate-950 border border-slate-800 focus:border-gold-400 rounded-xl px-4 py-3 text-xs text-white placeholder-slate-500 focus:outline-none"
+                  />
+                  <button
+                    type="submit"
+                    disabled={!turnstileToken || subscribing}
+                    className="btn-luxury-gold px-6 py-3 text-xs rounded-xl whitespace-nowrap cursor-pointer"
+                  >
+                    Join Dispatches
+                  </button>
+                </form>
+                <div className="max-w-md mx-auto text-left">
+                  <TurnstileWidget
+                    key={turnstileResetKey}
+                    action="newsletter"
+                    onVerify={setTurnstileToken}
+                  />
+                  {newsletterError && (
+                    <p className="text-sm text-red-400 mt-2" role="alert">
+                      {newsletterError}
+                    </p>
+                  )}
+                </div>
+              </>
             )}
           </div>
 

@@ -1,47 +1,81 @@
 import { NextResponse } from 'next/server';
-import { insertConsultationLead } from '@/lib/supabase';
+import { insertConsultationLead } from '@/lib/database';
 import { sendLeadNotificationEmail, sendLeadConfirmationEmail } from '@/lib/mailer';
+import { protectPublicSubmission } from '@/lib/public-api-protection';
 
 export async function POST(request) {
   try {
-    const body = await request.json();
-
-    // Basic validation
-    if (!body.name || !body.email || !body.phone || !body.company) {
+    const body = await request.json().catch(() => null);
+    if (!body) {
       return NextResponse.json(
-        { error: 'Please provide all required fields: name, email, phone, and company.' },
+        { error: 'Please provide valid consultation details.' },
         { status: 400 }
       );
     }
 
-    // 1. Persist to Supabase Database
-    let dbResult = { mode: 'pending' };
-    try {
-      dbResult = await insertConsultationLead(body);
-    } catch (dbErr) {
-      console.error('Supabase insert warning:', dbErr.message);
+    const protectionError = await protectPublicSubmission(request, body, 'consultation');
+    if (protectionError) {
+      return NextResponse.json(
+        { error: protectionError.error },
+        { status: protectionError.status }
+      );
     }
 
-    // 2. Dispatch Email via Nodemailer (to Yovarin admin + customer confirmation)
-    try {
-      await Promise.allSettled([
-        sendLeadNotificationEmail(body),
-        sendLeadConfirmationEmail(body),
-      ]);
-    } catch (emailErr) {
-      console.error('Nodemailer dispatch warning:', emailErr.message);
+    if (
+      !body ||
+      typeof body.name !== 'string' ||
+      typeof body.email !== 'string' ||
+      typeof body.phone !== 'string' ||
+      typeof body.company !== 'string' ||
+      !body.name.trim() ||
+      !body.email.trim() ||
+      !body.phone.trim() ||
+      !body.company.trim() ||
+      body.name.length > 200 ||
+      body.email.length > 320 ||
+      body.phone.length > 60 ||
+      body.company.length > 200 ||
+      (body.notes != null && (typeof body.notes !== 'string' || body.notes.length > 5000)) ||
+      (body.modules != null &&
+        (!Array.isArray(body.modules) ||
+          body.modules.length > 20 ||
+          body.modules.some((module) => typeof module !== 'string' || module.length > 80)))
+    ) {
+      return NextResponse.json(
+        { error: 'Please provide valid consultation details.' },
+        { status: 400 }
+      );
     }
+
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(body.email.trim())) {
+      return NextResponse.json(
+        { error: 'Please provide a valid email address.' },
+        { status: 400 }
+      );
+    }
+
+    const dbResult = await insertConsultationLead(body);
+    const emailResults = await Promise.allSettled([
+      sendLeadNotificationEmail(body),
+      sendLeadConfirmationEmail(body),
+    ]);
+
+    emailResults.forEach((result) => {
+      if (result.status === 'rejected') {
+        console.error('Consultation email dispatch failed:', result.reason);
+      }
+    });
 
     return NextResponse.json({
       success: true,
-      mode: dbResult.mode || 'delivered',
-      message: 'Consultation request successfully received and email notification dispatched.',
-      data: dbResult.data || body,
+      mode: dbResult.mode,
+      message: 'Consultation request received.',
+      data: { id: dbResult.data.id },
     });
   } catch (error) {
     console.error('API /consultation error:', error);
     return NextResponse.json(
-      { error: error.message || 'Failed to submit consultation lead.' },
+      { error: 'Failed to submit consultation lead. Please try again later.' },
       { status: 500 }
     );
   }

@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import TurnstileWidget from './TurnstileWidget';
 import { 
   X, 
   CheckCircle2, 
@@ -33,6 +34,9 @@ export default function ConsultationModal({ isOpen, onClose }) {
 
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [turnstileToken, setTurnstileToken] = useState('');
+  const [turnstileResetKey, setTurnstileResetKey] = useState(0);
+  const [formError, setFormError] = useState('');
 
   if (!isOpen) return null;
 
@@ -53,11 +57,12 @@ export default function ConsultationModal({ isOpen, onClose }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSubmitting(true);
+    setFormError('');
     try {
       const res = await fetch('/api/consultation', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({ ...formData, turnstileToken }),
       });
       const data = await res.json();
       if (!res.ok) {
@@ -66,7 +71,9 @@ export default function ConsultationModal({ isOpen, onClose }) {
       setSubmitted(true);
     } catch (err) {
       console.error('Submission error:', err);
-      setSubmitted(true);
+      setFormError(err.message || 'Failed to submit inquiry. Please try again.');
+      setTurnstileToken('');
+      setTurnstileResetKey((key) => key + 1);
     } finally {
       setSubmitting(false);
     }
@@ -297,9 +304,19 @@ export default function ConsultationModal({ isOpen, onClose }) {
 
               {/* Submit CTA */}
               <div className="pt-2">
+                <TurnstileWidget
+                  key={turnstileResetKey}
+                  action="consultation"
+                  onVerify={setTurnstileToken}
+                />
+                {formError && (
+                  <p className="text-sm text-red-400 mb-3" role="alert">
+                    {formError}
+                  </p>
+                )}
                 <button
                   type="submit"
-                  disabled={submitting}
+                  disabled={submitting || !turnstileToken}
                   className="btn-luxury-gold w-full py-4 text-xs font-bold rounded-2xl flex items-center justify-center gap-2 disabled:opacity-50 cursor-pointer shadow-xl"
                 >
                   {submitting ? (

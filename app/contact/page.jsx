@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import FaqSection from '@/components/FaqSection';
+import TurnstileWidget from '@/components/TurnstileWidget';
 import { 
   PhoneCall, 
   Mail, 
@@ -36,6 +37,9 @@ export default function ContactPage() {
 
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [turnstileToken, setTurnstileToken] = useState('');
+  const [turnstileResetKey, setTurnstileResetKey] = useState(0);
+  const [formError, setFormError] = useState('');
 
   const toggleModule = (mod) => {
     if (formData.modules.includes(mod)) {
@@ -54,11 +58,12 @@ export default function ContactPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSubmitting(true);
+    setFormError('');
     try {
       const res = await fetch('/api/consultation', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({ ...formData, turnstileToken }),
       });
       const data = await res.json();
       if (!res.ok) {
@@ -67,7 +72,9 @@ export default function ContactPage() {
       setSubmitted(true);
     } catch (err) {
       console.error('Submission error:', err);
-      setSubmitted(true);
+      setFormError(err.message || 'Failed to submit inquiry. Please try again.');
+      setTurnstileToken('');
+      setTurnstileResetKey((key) => key + 1);
     } finally {
       setSubmitting(false);
     }
@@ -346,9 +353,19 @@ export default function ContactPage() {
                     </div>
 
                     <div className="pt-2">
+                      <TurnstileWidget
+                        key={turnstileResetKey}
+                        action="consultation"
+                        onVerify={setTurnstileToken}
+                      />
+                      {formError && (
+                        <p className="text-sm text-red-500 mb-3" role="alert">
+                          {formError}
+                        </p>
+                      )}
                       <button
                         type="submit"
-                        disabled={submitting}
+                        disabled={submitting || !turnstileToken}
                         className="btn-luxury-gold w-full py-3.5 text-xs font-bold rounded-xl flex items-center justify-center gap-2 disabled:opacity-50"
                       >
                         {submitting ? (
