@@ -10,16 +10,15 @@ leads and newsletter subscribers stored in Cloudflare D1.
 3. Configure the Worker variables and secrets below.
 4. Apply the D1 schema with `npx wrangler d1 migrations apply yovarin-db --remote`.
 5. Test using `npm run cf:preview`.
-6. Deploy with `npm run cf:deploy`.
+6. Deploy with `npm run cf:deploy`; the production URL is
+   `https://yovarin.workers.dev/`.
 
 The `yovarin-db` database is already provisioned for this project. The migration
-creates the consultation-lead and newsletter-subscriber tables. Do not apply a
-destructive migration or change DNS until the production deployment is verified.
+creates the consultation-lead and newsletter-subscriber tables. Do not apply a destructive migration.
 
 ## Form protection
 
-Create a Cloudflare Turnstile widget that permits both the `workers.dev` host and
-the production hostname once that hostname is added to this Cloudflare account.
+Create a Cloudflare Turnstile widget that permits `yovarin.workers.dev`.
 Set `NEXT_PUBLIC_TURNSTILE_SITE_KEY` in the build environment and
 `TURNSTILE_SECRET_KEY` as a Worker secret. Public form submissions are rate
 limited using the `API_LIMITER` binding and rejected if Turnstile is missing or
@@ -54,9 +53,7 @@ Cloudflare and Access is configured for it.
 
 Cloudflare Workers do not support outbound SMTP connections. For Cloudflare,
 configure a Resend API key as the Worker secret `RESEND_API_KEY` and set
-`EMAIL_FROM` to a sender address verified with Resend. The existing
-Gmail/Nodemailer settings remain available for Vercel and local Node.js
-deployments.
+`EMAIL_FROM` to a sender address verified with Resend. The Gmail/Nodemailer settings remain available for local Node.js deployments.
 
 ```powershell
 npx wrangler secret put RESEND_API_KEY
@@ -67,16 +64,13 @@ npm run cf:deploy
 Set `EMAIL_FROM`, `ADMIN_EMAIL`, `CF_ACCESS_TEAM_DOMAIN`, and `CF_ACCESS_AUD` as
 Worker variables in the Cloudflare dashboard.
 
-## Production domain cutover
+## Production URL
 
-The `yovarin.com` zone is not yet in this Cloudflare account. Current public DNS
-lookups return no records for `yovarin.com`; the existing Vercel deployment is
-available at `yovarin.vercel.app`. Confirm the exact custom domain and its
-registration before attempting a zone or nameserver change. If the intended
-domain is registered, add the zone, review and preserve any existing DNS
-records (especially MX, SPF, DKIM, and verification records), and verify the
-Worker's custom-domain setup. Leave the Vercel deployment untouched until the
-Cloudflare Worker and forms have been verified.
+The site uses `https://yovarin.workers.dev/` as its canonical production URL.
+`workers_dev` is enabled in `wrangler.jsonc`; confirm the Cloudflare account has
+the `yovarin.workers.dev` hostname available before deploying. Vercel
+deployments are not managed by this repository and must be disabled separately
+in the Vercel dashboard.
 
 ## Builds
 

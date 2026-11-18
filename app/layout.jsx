@@ -3,6 +3,7 @@ import ThemeProvider from '@/components/ThemeProvider';
 import LuxuryBackground from '@/components/LuxuryBackground';
 
 export const metadata = {
+  metadataBase: new URL('https://yovarin.workers.dev'),
   title: 'Yovarin | Bespoke Enterprise Web Applications, ERPNext & AI Architecture',
   description: 'Bespoke enterprise engineering firm specializing in high-performance Next.js web applications, full-cycle ERPNext implementations, Yovarin Desk, and private read-only AI Pilots.',
   keywords: [
@@ -14,7 +15,10 @@ export const metadata = {
     'read-only AI copilot',
     'bespoke software engineering'
   ],
-  authors: [{ name: 'Yovarin Technologies' }],
+  authors: [
+    { name: 'Yovarin Technologies' },
+    { name: 'Rizwanshahani', url: 'https://github.com/Rizwanshahani' },
+  ],
   icons: {
     icon: '/favicon.svg',
     shortcut: '/favicon.svg',
@@ -23,7 +27,7 @@ export const metadata = {
   openGraph: {
     title: 'Yovarin | Bespoke Enterprise Web & ERP Solutions',
     description: 'Elevate your operations with bespoke Next.js web applications, ERPNext implementation, and private read-only AI copilots.',
-    url: 'https://yovarin.com',
+    url: 'https://yovarin.workers.dev/',
     siteName: 'Yovarin Technologies',
     locale: 'en_US',
     type: 'website',

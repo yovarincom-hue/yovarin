@@ -192,6 +192,16 @@ export default function Footer() {
         <div className="pt-12 mt-12 border-t border-gold-500/15 flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] text-slate-500">
           <div>
             &copy; {new Date().getFullYear()} Yovarin Technologies. All rights reserved. Architected with Next.js 14 &amp; Tailwind CSS.
+            <span className="mx-1">|</span>
+            Created by{' '}
+            <a
+              href="https://github.com/Rizwanshahani"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-gold-600 dark:hover:text-gold-300 transition-colors"
+            >
+              Rizwanshahani
+            </a>
           </div>
 
           <div className="flex items-center gap-4">

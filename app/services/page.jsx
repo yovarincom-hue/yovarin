@@ -39,7 +39,7 @@ const ALL_SERVICES = [
       "Semantic HTML & technical SEO built for ranking",
       "Global CDN caching & automated CI/CD deployment"
     ],
-    techStack: ["Next.js 14", "React", "Tailwind CSS", "TypeScript", "Vercel", "AWS CloudFront"]
+    techStack: ["Next.js 14", "React", "Tailwind CSS", "TypeScript", "Cloudflare Workers", "AWS CloudFront"]
   },
   {
     id: "web-apps",
