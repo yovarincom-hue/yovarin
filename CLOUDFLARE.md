@@ -13,8 +13,9 @@ leads and newsletter subscribers stored in Cloudflare D1.
 6. Deploy with `npm run cf:deploy`; the production URL is
    `https://yovarin.workers.dev/`.
 
-The `yovarin-db` database is already provisioned for this project. The migration
-creates the consultation-lead and newsletter-subscriber tables. Do not apply a destructive migration.
+The `yovarin-db` database is already provisioned for this project. Migrations
+create the consultation-lead, newsletter-subscriber, and account-authentication
+tables. Do not apply a destructive migration.
 
 ## Form protection
 
@@ -55,14 +56,27 @@ Cloudflare Workers do not support outbound SMTP connections. For Cloudflare,
 configure a Resend API key as the Worker secret `RESEND_API_KEY` and set
 `EMAIL_FROM` to a sender address verified with Resend. The Gmail/Nodemailer settings remain available for local Node.js deployments.
 
+Account registration and password recovery send a six-digit email code that
+expires after 10 minutes. Set a unique random `AUTH_SECRET` Worker secret to
+protect the stored one-time-code verifiers; it must be at least 32 characters.
+Account access also requires the
+Turnstile site and secret keys described above. Passwords are stored as PBKDF2
+hashes; browser sessions use HttpOnly, SameSite cookies. Resetting a password
+invalidates existing sessions.
+
 ```powershell
 npx wrangler secret put RESEND_API_KEY
 npx wrangler secret put TURNSTILE_SECRET_KEY
+npx wrangler secret put AUTH_SECRET
+npx wrangler d1 migrations apply yovarin-db --remote
 npm run cf:deploy
 ```
 
-Set `EMAIL_FROM`, `ADMIN_EMAIL`, `CF_ACCESS_TEAM_DOMAIN`, and `CF_ACCESS_AUD` as
-Worker variables in the Cloudflare dashboard.
+Set `EMAIL_FROM`, `NEXT_PUBLIC_TURNSTILE_SITE_KEY`, `ADMIN_EMAIL`,
+`CF_ACCESS_TEAM_DOMAIN`, and `CF_ACCESS_AUD` as Worker/build variables in the
+Cloudflare dashboard. For local development, set `AUTH_SECRET`,
+`TURNSTILE_SECRET_KEY`, `RESEND_API_KEY`, and `EMAIL_FROM` in `.dev.vars`, and
+set `NEXT_PUBLIC_TURNSTILE_SITE_KEY` in the build environment.
 
 ## Production URL
 

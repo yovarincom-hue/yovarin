@@ -14,7 +14,9 @@ import {
   ChevronRight,
   BookOpen,
   Globe,
-  Crown
+  Crown,
+  LogOut,
+  UserRound
 } from 'lucide-react';
 import ConsultationModal from './ConsultationModal';
 import LuxuryLogo from './LuxuryLogo';
@@ -24,6 +26,8 @@ export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [consultationOpen, setConsultationOpen] = useState(false);
+  const [accountUser, setAccountUser] = useState(null);
+  const [signOutError, setSignOutError] = useState('');
   const pathname = usePathname();
 
   useEffect(() => {
@@ -33,6 +37,37 @@ export default function Navbar() {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  useEffect(() => {
+    let active = true;
+    const loadAccount = () => {
+      fetch('/api/auth/session', { credentials: 'same-origin', cache: 'no-store' })
+        .then((response) => response.ok ? response.json() : null)
+        .then((result) => {
+          if (active) setAccountUser(result?.user || null);
+        })
+        .catch((error) => console.error('Could not load account navigation state:', error));
+    };
+    loadAccount();
+    window.addEventListener('yovarin-auth-changed', loadAccount);
+    return () => {
+      active = false;
+      window.removeEventListener('yovarin-auth-changed', loadAccount);
+    };
+  }, []);
+
+  async function signOut() {
+    setSignOutError('');
+    try {
+      const response = await fetch('/api/auth/logout', { method: 'POST', credentials: 'same-origin' });
+      if (!response.ok) throw new Error('Sign out failed.');
+      setAccountUser(null);
+      window.dispatchEvent(new Event('yovarin-auth-changed'));
+    } catch (error) {
+      console.error('Could not sign out:', error);
+      setSignOutError('Could not sign out. Please try again.');
+    }
+  }
 
   // Keep labels short so they fit in one row on desktop
   const navLinks = [
@@ -101,6 +136,20 @@ export default function Navbar() {
             <div className="hidden lg:flex items-center gap-2 shrink-0">
               <ThemeToggle />
 
+              {accountUser ? (
+                <div className="flex items-center gap-1">
+                  <Link href="/account" title={accountUser.email} className="flex h-8 w-8 items-center justify-center rounded-full border border-gold-500/35 bg-gold-500/15 text-gold-800 dark:text-gold-200" aria-label={`Account for ${accountUser.name}`}>
+                    <UserRound className="h-4 w-4" />
+                  </Link>
+                  <button onClick={signOut} className="rounded-lg p-2 text-slate-500 transition hover:bg-gold-500/10 hover:text-gold-700 dark:text-slate-300 dark:hover:text-gold-300" aria-label="Sign out" title="Sign out">
+                    <LogOut className="h-4 w-4" />
+                  </button>
+                </div>
+              ) : (
+                <Link href="/account" className="rounded-xl border border-gold-500/30 px-3 py-1.5 text-xs font-semibold text-slate-700 transition hover:border-gold-500/60 hover:text-gold-800 dark:text-slate-200 dark:hover:text-gold-300">Sign in</Link>
+              )}
+              {signOutError && <span role="alert" className="sr-only">{signOutError}</span>}
+
               <Link
                 href="/products#pilot-demo"
                 className="px-3 py-1.5 text-xs font-semibold text-cyan-800 dark:text-cyan-300 bg-cyan-100/70 dark:bg-cyan-950/50 hover:bg-cyan-200/80 dark:hover:bg-cyan-900/60 border border-cyan-500/30 rounded-xl transition-all flex items-center gap-1.5 whitespace-nowrap"
@@ -157,6 +206,24 @@ export default function Navbar() {
             </nav>
 
             <div className="pt-4 border-t border-gold-500/20 flex flex-col gap-3">
+              {accountUser ? (
+                <>
+                  <div className="flex items-center justify-between gap-3 rounded-xl border border-gold-500/20 bg-gold-500/5 px-4 py-3">
+                    <Link href="/account" onClick={() => setMobileMenuOpen(false)} className="flex min-w-0 items-center gap-2 text-sm text-slate-700 dark:text-slate-200">
+                      <UserRound className="h-4 w-4 shrink-0 text-gold-600 dark:text-gold-300" />
+                      <span className="truncate">{accountUser.name}</span>
+                    </Link>
+                    <button onClick={signOut} className="flex items-center gap-1.5 text-xs text-slate-500 hover:text-gold-700 dark:text-slate-300 dark:hover:text-gold-300">
+                      <LogOut className="h-3.5 w-3.5" /> Sign out
+                    </button>
+                  </div>
+                  {signOutError && <p role="alert" className="text-center text-xs text-rose-600 dark:text-rose-300">{signOutError}</p>}
+                </>
+              ) : (
+                <Link href="/account" onClick={() => setMobileMenuOpen(false)} className="btn-luxury-outline w-full py-3 text-xs font-semibold flex items-center justify-center gap-2">
+                  <UserRound className="h-4 w-4 text-gold-600 dark:text-gold-300" /> Sign in or create an account
+                </Link>
+              )}
               <Link
                 href="/products#pilot-demo"
                 onClick={() => setMobileMenuOpen(false)}
