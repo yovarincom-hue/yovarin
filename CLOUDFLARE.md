@@ -11,15 +11,30 @@ leads and newsletter subscribers stored in Cloudflare D1.
 4. Apply the D1 schema with `npx wrangler d1 migrations apply yovarin-db --remote`.
 5. Test using `npm run cf:preview`.
 6. Deploy with `npm run cf:deploy`; the production URL is
-   `https://yovarin.workers.dev/`.
+   `https://yovarin.yovarin.workers.dev/`.
 
 The `yovarin-db` database is already provisioned for this project. Migrations
 create the consultation-lead, newsletter-subscriber, and account-authentication
 tables. Do not apply a destructive migration.
 
+### Automatic deployment from GitHub
+
+`.github/workflows/deploy-cloudflare.yml` builds and deploys the Worker after
+each push to `main`, applying pending D1 migrations first. Configure these
+GitHub repository Actions secrets and variable:
+
+- `CLOUDFLARE_API_TOKEN`: token with Workers Scripts Edit and D1 Edit access.
+- `CLOUDFLARE_ACCOUNT_ID`: Cloudflare account ID.
+- `NEXT_PUBLIC_TURNSTILE_SITE_KEY` (Actions variable): the public key for the
+  Turnstile widget allowed on the production hostname.
+
+The Worker must also have the runtime secrets `AUTH_SECRET`,
+`TURNSTILE_SECRET_KEY`, and `RESEND_API_KEY`, plus the `EMAIL_FROM` variable.
+Set those in Cloudflare before relying on account registration and recovery.
+
 ## Form protection
 
-Create a Cloudflare Turnstile widget that permits `yovarin.workers.dev`.
+Create a Cloudflare Turnstile widget that permits `yovarin.yovarin.workers.dev`.
 Set `NEXT_PUBLIC_TURNSTILE_SITE_KEY` in the build environment and
 `TURNSTILE_SECRET_KEY` as a Worker secret. Public form submissions are rate
 limited using the `API_LIMITER` binding and rejected if Turnstile is missing or
@@ -80,11 +95,9 @@ set `NEXT_PUBLIC_TURNSTILE_SITE_KEY` in the build environment.
 
 ## Production URL
 
-The site uses `https://yovarin.workers.dev/` as its canonical production URL.
-`workers_dev` is enabled in `wrangler.jsonc`; confirm the Cloudflare account has
-the `yovarin.workers.dev` hostname available before deploying. Vercel
-deployments are not managed by this repository and must be disabled separately
-in the Vercel dashboard.
+The site uses `https://yovarin.yovarin.workers.dev/` as its production URL.
+`workers_dev` is enabled in `wrangler.jsonc`. Vercel deployments are not managed
+by this repository and must be disabled separately in the Vercel dashboard.
 
 ## Builds
 
