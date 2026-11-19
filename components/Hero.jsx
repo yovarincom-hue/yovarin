@@ -1,9 +1,11 @@
 'use client';
 
 import React from 'react';
+import Link from 'next/link';
 import { 
   ArrowRight, 
   Bot, 
+  UserRound,
   ShieldCheck, 
   CheckCircle2, 
   TrendingUp, 
@@ -63,6 +65,13 @@ export default function Hero({ onOpenConsultation, onOpenPilotDemo }) {
               <Bot className="w-4 h-4 text-cyan-600 dark:text-cyan-400" />
               <span>Launch Live Pilot AI Simulator</span>
             </button>
+            <Link
+              href="/account"
+              className="w-full sm:w-auto px-7 py-4 text-xs sm:text-sm font-semibold text-gold-800 dark:text-gold-200 bg-white/70 dark:bg-obsidian-950/70 hover:bg-gold-500/10 border border-gold-500/35 hover:border-gold-400 rounded-2xl transition-all flex items-center justify-center gap-2.5 shadow-sm backdrop-blur-md"
+            >
+              <UserRound className="w-4 h-4" />
+              <span>Client sign in</span>
+            </Link>
           </div>
 
           {/* Trust Guarantees */}

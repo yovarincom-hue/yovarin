@@ -168,8 +168,18 @@ export default function Navbar() {
             </div>
 
             {/* Mobile: Theme Toggle + Hamburger */}
-            <div className="flex lg:hidden items-center gap-2 shrink-0">
+            <div className="flex lg:hidden items-center gap-1 shrink-0">
               <ThemeToggle />
+              <Link
+                href="/account"
+                onClick={() => setMobileMenuOpen(false)}
+                aria-label={accountUser ? `Account for ${accountUser.name}` : 'Sign in'}
+                title={accountUser ? 'Your account' : 'Sign in'}
+                className="inline-flex h-10 items-center justify-center gap-1.5 rounded-xl border border-gold-500/30 bg-white/80 px-1.5 text-xs font-semibold text-gold-800 transition hover:border-gold-500/60 hover:bg-gold-500/10 dark:bg-slate-900/80 dark:text-gold-200"
+              >
+                <UserRound className="h-4 w-4 min-[360px]:hidden" />
+                <span className="hidden min-[360px]:inline">{accountUser ? 'Account' : 'Sign in'}</span>
+              </Link>
               <button
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
                 className="p-2 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white bg-white/80 dark:bg-slate-900/80 rounded-xl border border-gold-500/20"
