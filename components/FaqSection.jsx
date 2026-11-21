@@ -13,8 +13,8 @@ const FAQS = [
     a: "SAP and NetSuite cost hundreds of thousands of dollars in recurring seat licenses and lock you into proprietary vendor ecosystems. Odoo charges per module and per user with frequent license changes. ERPNext is 100% open-source, written in modern Python/JS, contains all modules out-of-the-box (Manufacturing, Accounts, Stock, HR, CRM) with zero per-user licensing fees. You own your system and your data forever."
   },
   {
-    q: "How does Yovarin Pilot AI guarantee zero data leaks?",
-    a: "Yovarin Pilot operates under a strict 'Read-Only Replicated Architecture'. It queries an isolated read replica database, strictly inherits ERPNext's role-based permissions (so unauthorized staff cannot see payroll or sensitive margins), and connects to private, enterprise-grade LLM endpoints where your data is never used for model training or public indexing."
+    q: "How does Yovarin Pilot protect ERP data?",
+    a: "Pilot only performs read-only queries through Frappe's permission-checked API, with allowed DocTypes and fields restricted by the service. Access is limited to approved Yovarin accounts. Questions and the minimum records needed to answer them are sent to the AI provider configured by the organization, so review that provider's data-processing terms and use a dedicated ERPNext account with narrowly scoped read permissions."
   },
   {
     q: "Our business has complex manufacturing with multi-level BOMs and subcontractors. Can Yovarin handle this?",

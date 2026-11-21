@@ -178,20 +178,16 @@ import frappe
 
 @frappe.whitelist()
 def query_executive_kpis(company, fiscal_year):
-    # Enforce role-based permission
-    if not frappe.has_permission("GL Entry", "read"):
-        frappe.throw("Insufficient role permissions for financial analytics.")
-    
-    # Query read-replica safely with zero DB write rights
-    metrics = frappe.db.sql("""
-        SELECT 
-            SUM(debit) - SUM(credit) AS net_margin,
-            COUNT(DISTINCT voucher_no) as transaction_count
-        FROM \`tabGL Entry\`
-        WHERE company = %s AND fiscal_year = %s
-    """, (company, fiscal_year), as_dict=True)
+    # get_list applies Frappe's read permissions and document-level filters.
+    # Use a dedicated API user with read-only roles for external integrations.
+    entries = frappe.get_list(
+        "GL Entry",
+        filters={"company": company, "fiscal_year": fiscal_year},
+        fields=["debit", "credit", "voucher_no"],
+        limit_page_length=100
+    )
 
-    return metrics[0]`}
+    return entries`}
             </pre>
           </div>
 

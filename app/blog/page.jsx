@@ -49,8 +49,8 @@ export const BLOG_POSTS = [
   },
   {
     slug: 'read-only-ai-copilots-erp',
-    title: 'Zero Data Leaks: How We Built Read-Only Enterprise AI Copilots with Frappe',
-    excerpt: 'Connecting enterprise databases to generative AI is a massive security liability unless handled with strict isolation. Explore Yovarin Pilot’s read-only replication architecture and role-based permission enforcement.',
+    title: 'Building Read-Only Enterprise AI Integrations with Frappe',
+    excerpt: 'Connecting ERP data to generative AI requires scoped read-only access, permission-checked queries, and careful review of the configured provider’s data-processing terms.',
     image: 'https://images.unsplash.com/photo-1620712943543-bcc4688e7485?auto=format&fit=crop&w=1200&q=80',
     category: 'Enterprise AI',
     date: 'Oct 19, 2026',

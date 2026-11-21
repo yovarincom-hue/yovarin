@@ -32,6 +32,42 @@ The Worker must also have the runtime secrets `AUTH_SECRET`,
 `TURNSTILE_SECRET_KEY`, and `RESEND_API_KEY`, plus the `EMAIL_FROM` variable.
 Set those in Cloudflare before relying on account registration and recovery.
 
+## Yovarin Pilot AI
+
+The Pilot endpoint uses an OpenAI-compatible chat-completions API and a
+permission-limited ERPNext/Frappe API account. Configure these Worker variables
+and secrets before enabling live queries:
+
+- `PILOT_AI_BASE_URL`: HTTPS base URL for the provider API, such as
+  `https://provider.example/v1`.
+- `PILOT_AI_MODEL`: model name supported by that endpoint.
+- `PILOT_AI_API_KEY`: provider API key (Worker secret).
+- `FRAPPE_BASE_URL`: HTTPS URL of the ERPNext site.
+- `FRAPPE_API_KEY` and `FRAPPE_API_SECRET`: credentials for a dedicated
+  read-only ERPNext user (both Worker secrets).
+- `PILOT_ALLOWED_EMAILS`: comma-separated email addresses of verified Yovarin
+  accounts permitted to query this shared ERP connection.
+
+Grant that ERPNext user read-only access only to the required `Sales Invoice`,
+`Bin`, `Item`, and `Work Order` records and fields. Pilot enforces its own
+doctype/field allowlist, limits queries to 20 records, and uses Frappe's
+permission-checked `frappe.client.get_list` API; the ERPNext account's
+permissions remain essential. The question and returned ERP records are sent
+to the configured AI provider. Confirm your organization's data-processing
+requirements with that provider before adding credentials. The Pilot also
+requires the existing `API_LIMITER`, `TURNSTILE_SECRET_KEY`, and
+`NEXT_PUBLIC_TURNSTILE_SITE_KEY` settings. Requests require a signed-in,
+verified Yovarin account whose email is on `PILOT_ALLOWED_EMAILS`; this
+allowlist is required because the configured Frappe API identity is shared
+across requests and does not inherit each visitor's ERPNext identity.
+
+Set the `PILOT_AI_API_KEY`, `FRAPPE_API_KEY`, and `FRAPPE_API_SECRET` using
+`npx wrangler secret put`; set the base URLs, model name, and approved email
+list as Worker variables. For local development, set them in `.dev.vars`.
+Never commit real credentials. Pilot returns a configuration error until all
+required settings are present. The rest of the site's currently rendered
+sections do not require a separate feature-activation flag.
+
 ## Form protection
 
 Create a Cloudflare Turnstile widget that permits `yovarin.yovarin.workers.dev`.

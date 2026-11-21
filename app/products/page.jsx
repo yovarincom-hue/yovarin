@@ -78,7 +78,7 @@ export default function ProductsPage() {
         <section className="py-20 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center space-y-2 mb-10">
             <h3 className="text-2xl sm:text-3xl font-bold font-serif text-slate-900 dark:text-white">Why Yovarin Pilot Beats Generic AI</h3>
-            <p className="text-xs text-slate-500 dark:text-slate-400">Enterprise data requires isolated read replicas and strict permission inheritance.</p>
+            <p className="text-xs text-slate-500 dark:text-slate-400">Enterprise data requires permission-checked ERP APIs, narrowly scoped read-only credentials, and an approved AI provider.</p>
           </div>
 
           <div className="luxury-card overflow-hidden shadow-2xl">
@@ -92,16 +92,16 @@ export default function ProductsPage() {
               </thead>
               <tbody className="divide-y divide-gold-500/15 text-slate-700 dark:text-slate-300">
                 <tr>
-                  <td className="p-4 font-medium text-slate-900 dark:text-white">Database Safety Guarantee</td>
+                  <td className="p-4 font-medium text-slate-900 dark:text-white">Read-Only Query Scope</td>
                   <td className="p-4 text-emerald-700 dark:text-emerald-400 font-semibold flex items-center gap-1.5">
-                    <CheckCircle2 className="w-4 h-4" /> 100% Read-Only Replica (Zero write rights)
+                    <CheckCircle2 className="w-4 h-4" /> Permission-checked Frappe API; read-only integration account
                   </td>
                   <td className="p-4 text-rose-600 dark:text-rose-400">Direct DB credentials or risky write hooks</td>
                 </tr>
                 <tr>
                   <td className="p-4 font-medium text-slate-900 dark:text-white">User Role Inheritance</td>
                   <td className="p-4 text-emerald-700 dark:text-emerald-400 font-semibold flex items-center gap-1.5">
-                    <CheckCircle2 className="w-4 h-4" /> Strictly inherits ERPNext Role Permissions
+                    <CheckCircle2 className="w-4 h-4" /> Uses the configured ERPNext account's read permissions
                   </td>
                   <td className="p-4 text-rose-600 dark:text-rose-400">Ignores user roles (data leaks likely)</td>
                 </tr>
@@ -113,9 +113,9 @@ export default function ProductsPage() {
                   <td className="p-4 text-slate-500 dark:text-slate-400">Standard English only</td>
                 </tr>
                 <tr>
-                  <td className="p-4 font-medium text-slate-900 dark:text-white">Proprietary Training Safety</td>
+                  <td className="p-4 font-medium text-slate-900 dark:text-white">AI Provider Data Handling</td>
                   <td className="p-4 text-emerald-700 dark:text-emerald-400 font-semibold flex items-center gap-1.5">
-                    <CheckCircle2 className="w-4 h-4" /> Zero enterprise data sent to public model training
+                    <CheckCircle2 className="w-4 h-4" /> Configured by the organization; review provider terms
                   </td>
                   <td className="p-4 text-rose-600 dark:text-rose-400">Often absorbed into public model datasets</td>
                 </tr>

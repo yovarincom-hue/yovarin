@@ -227,7 +227,7 @@ export default function ProductsShowcase({ onOpenPilotDemo, onOpenConsultation }
                   </div>
                   <div>
                     <strong className="text-slate-900 dark:text-white text-sm font-medium">Read-Only Safety Guarantee:</strong>
-                    <p className="text-xs text-slate-600 dark:text-slate-400 mt-0.5">Pilot never modifies records or executes state writes. Your database integrity is 100% safeguarded.</p>
+                    <p className="text-xs text-slate-600 dark:text-slate-400 mt-0.5">Pilot uses read-only Frappe API calls. Configure a dedicated ERPNext account with narrowly scoped read permissions.</p>
                   </div>
                 </div>
 
@@ -236,8 +236,8 @@ export default function ProductsShowcase({ onOpenPilotDemo, onOpenConsultation }
                     <Cpu className="w-3.5 h-3.5" />
                   </div>
                   <div>
-                    <strong className="text-slate-900 dark:text-white text-sm font-medium">Role-Based Permission Inheritance:</strong>
-                    <p className="text-xs text-slate-600 dark:text-slate-400 mt-0.5">Pilot strictly enforces ERPNext User Roles. A warehouse supervisor cannot see company payroll numbers.</p>
+                    <strong className="text-slate-900 dark:text-white text-sm font-medium">Permission-Checked ERP Queries:</strong>
+                    <p className="text-xs text-slate-600 dark:text-slate-400 mt-0.5">Frappe applies the configured service account&apos;s read permissions; access to the shared connection is restricted to approved site accounts.</p>
                   </div>
                 </div>
 
@@ -256,8 +256,8 @@ export default function ProductsShowcase({ onOpenPilotDemo, onOpenConsultation }
                     <Database className="w-3.5 h-3.5" />
                   </div>
                   <div>
-                    <strong className="text-slate-900 dark:text-white text-sm font-medium">Self-Hosted or Private Cloud LLM:</strong>
-                    <p className="text-xs text-slate-600 dark:text-slate-400 mt-0.5">Your proprietary operational data never trains external public models. Runs locally or via encrypted enterprise private endpoints.</p>
+                    <strong className="text-slate-900 dark:text-white text-sm font-medium">Configurable AI Provider:</strong>
+                    <p className="text-xs text-slate-600 dark:text-slate-400 mt-0.5">Questions and relevant ERP records are sent to the configured provider. Review its data-processing terms before enabling the integration.</p>
                   </div>
                 </div>
               </div>
@@ -292,7 +292,7 @@ export default function ProductsShowcase({ onOpenPilotDemo, onOpenConsultation }
                       <div>
                         <div className="font-semibold font-serif text-slate-900 dark:text-white">Yovarin Pilot Assistant</div>
                         <div className="text-[10px] text-cyan-700 dark:text-cyan-400 flex items-center gap-1 font-mono">
-                          <span className="w-1.5 h-1.5 rounded-full bg-cyan-500"></span> Connected to live ERP replica
+                          <span className="w-1.5 h-1.5 rounded-full bg-cyan-500"></span> Example • read-only ERP API
                         </div>
                       </div>
                     </div>

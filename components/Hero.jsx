@@ -78,7 +78,7 @@ export default function Hero({ onOpenConsultation, onOpenPilotDemo }) {
           <div className="pt-4 flex flex-wrap items-center justify-center gap-6 text-xs text-slate-600 dark:text-slate-400 font-mono">
             <div className="flex items-center gap-1.5">
               <ShieldCheck className="w-4 h-4 text-gold-600 dark:text-gold-400" />
-              <span>Zero-Data Leakage AI</span>
+              <span>Permission-Checked Read-Only AI</span>
             </div>
             <div className="flex items-center gap-1.5">
               <CheckCircle2 className="w-4 h-4 text-gold-600 dark:text-gold-400" />
@@ -103,13 +103,13 @@ export default function Hero({ onOpenConsultation, onOpenPilotDemo }) {
                   <span className="w-3 h-3 rounded-full bg-gold-500/80"></span>
                   <span className="w-3 h-3 rounded-full bg-emerald-500/80"></span>
                   <span className="ml-3 text-xs font-mono text-slate-600 dark:text-slate-400 flex items-center gap-1.5">
-                    <Terminal className="w-3.5 h-3.5 text-gold-600 dark:text-gold-400" /> yovarin-enterprise.cloud &bull; live-replica
+                    <Terminal className="w-3.5 h-3.5 text-gold-600 dark:text-gold-400" /> ERPNext API &bull; read-only
                   </span>
                 </div>
                 <div className="hidden sm:flex items-center gap-3">
                   <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono bg-gold-500/15 text-gold-800 dark:text-gold-300 border border-gold-500/30 flex items-center gap-1">
                     <span className="w-1.5 h-1.5 rounded-full bg-gold-500 animate-pulse"></span>
-                    SYNCED: 12s ago
+                    READ-ONLY QUERY
                   </span>
                   <span className="text-xs text-slate-500 dark:text-slate-400 font-mono">v15.8-SOVEREIGN</span>
                 </div>
